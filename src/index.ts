@@ -1,27 +1,18 @@
-import { fibonacciGenerator, fibonacciRatio } from "./fibonacci";
+import { type ChatMessage, generateMessage } from "./chat";
 
-async function main() {
-  const fibonacci = fibonacciGenerator();
-  let count = 1;
-  let prev = 0;
+const main = async () => {
+  const messages: ChatMessage[] = [
+    {
+      role: "user",
+      content: "Hello!",
+    },
+  ];
+  const count = () => messages.length;
 
-  console.log(`Count\t${"Fibonacci".padStart(20, " ")}\tRatio`);
-  const timer = setInterval(() => {
-    const { value, done } = fibonacci.next();
-    if (done) {
-      clearInterval(timer);
-      return;
-    }
-    const ratio = fibonacciRatio(prev, value);
+  while (true) {
+    const newMessage = await generateMessage(messages, count());
+    messages.push(newMessage);
+  }
+};
 
-    const countStr = count.toString().padStart(5, " ");
-    const fibStr = value.toString().padStart(20, " ");
-    const ratioStr = ratio.toString().padEnd(20, " ");
-    console.log(`${countStr}\t${fibStr}\t${ratioStr}`);
-
-    prev = value;
-    count++;
-  }, 1000);
-}
-
-main();
+await main();
